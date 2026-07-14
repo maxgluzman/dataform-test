@@ -1,0 +1,18 @@
+config {
+    type: "table",
+    schema: "dataform_data_vault",
+    name: "hub_vendor",
+    description: "Hub table for vendors.",
+    columns: {
+        vendor_key: "Unique identifier for the vendor.",
+        load_date: "The date and time when the record was loaded."
+    }
+}
+
+SELECT
+  DISTINCT vendor_id AS vendor_key,
+  CURRENT_TIMESTAMP() AS load_date
+FROM
+  ${ref("stg_green_taxi_trips")}
+WHERE
+  vendor_id IS NOT NULL

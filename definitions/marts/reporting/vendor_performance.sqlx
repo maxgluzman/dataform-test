@@ -1,0 +1,22 @@
+config {
+  type: "view",
+  schema: "dataform_reporting",
+  name: "vendor_performance",
+  description: "Aggregated view to track total distance and revenue by vendor.",
+  columns: {
+    vendor_key: "The key for the vendor.",
+    total_distance: "The total distance of trips for the vendor.",
+    total_revenue: "The total revenue of trips for the vendor."
+  }
+}
+
+SELECT
+  v.vendor_key,
+  SUM(f.trip_distance) AS total_distance,
+  SUM(f.total_amount) AS total_revenue
+FROM
+  ${ref("fact_trips")} AS f
+  JOIN ${ref("dim_vendor")} AS v
+    ON f.vendor_key = v.vendor_key
+GROUP BY
+  1

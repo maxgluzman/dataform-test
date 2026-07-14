@@ -1,0 +1,45 @@
+config {
+  type: "view",
+  schema: "dataform_staging",
+  name: "stg_green_taxi_trips",
+  description: "Staging table for green taxi trips data with enriched date and time features.",
+  columns: {
+    vendor_id: "A code indicating the TPEP provider that provided the record.",
+    pickup_datetime: "The date and time when the meter was engaged.",
+    dropoff_datetime: "The date and time when the meter was disengaged.",
+    store_and_fwd_flag: "This flag indicates whether the trip record was held in vehicle memory before sending to the vendor, aka ‘store and forward,’ because the vehicle did not have a connection to the server.",
+    rate_code: "The final rate code in effect at the end of the trip.",
+    passenger_count: "The number of passengers in the vehicle.",
+    trip_distance: "The elapsed trip distance in miles reported by the taximeter.",
+    fare_amount: "The time-and-distance fare calculated by the meter.",
+    extra: "Miscellaneous extras and surcharges. Currently, this only includes the $0.50 and $1 rush hour and overnight charges.",
+    mta_tax: "$0.50 MTA tax that is automatically triggered based on the metered rate in use.",
+    tip_amount: "This field is automatically populated for credit card tips. Cash tips are not included.",
+    tolls_amount: "Total amount of all tolls paid in trip.",
+    ehail_fee: "The e-hail fee.",
+    airport_fee: "The airport fee.",
+    total_amount: "The total amount charged to passengers. Does not include cash tips.",
+    payment_type: "A numeric code signifying how the passenger paid for the trip.",
+    distance_between_service: "The distance between the time the meter was engaged for the previous trip and the time the meter was engaged for this trip.",
+    time_between_service: "The time between the time the meter was disengaged for the previous trip and the time the meter was engaged for this trip.",
+    trip_type: "A code indicating whether the trip was a street-hail or a dispatch.",
+    imp_surcharge: "$0.30 improvement surcharge assessed trips at the flag drop. The improvement surcharge began being levied in 2015.",
+    pickup_location_id: "TLC Taxi Zone in which the taximeter was engaged.",
+    dropoff_location_id: "TLC Taxi Zone in which the taximeter was disengaged.",
+    data_file_year: "The year of the data file.",
+    data_file_month: "The month of the data file.",
+    pickup_date: "The date when the meter was engaged.",
+    pickup_time: "The time when the meter was engaged.",
+    dropoff_date: "The date when the meter was disengaged.",
+    dropoff_time: "The time when the meter was disengaged."
+  }
+}
+
+SELECT
+  *,
+  CAST(pickup_datetime AS DATE) AS pickup_date,
+  CAST(pickup_datetime AS TIME) AS pickup_time,
+  CAST(dropoff_datetime AS DATE) AS dropoff_date,
+  CAST(dropoff_datetime AS TIME) AS dropoff_time
+FROM
+  ${ref("tlc_green_trips_2022")}

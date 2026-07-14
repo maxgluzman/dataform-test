@@ -1,0 +1,36 @@
+config {
+  type: "table",
+  schema: "dataform_data_vault",
+  name: "sat_trip_details",
+  description: "Satellite table with trip details.",
+  columns: {
+    trip_key: "Foreign key to the trip hub.",
+    passenger_count: "The number of passengers in the vehicle.",
+    trip_distance: "The elapsed trip distance in miles reported by the taximeter.",
+    rate_code: "The final rate code in effect at the end of the trip.",
+    store_and_fwd_flag: "This flag indicates whether the trip record was held in vehicle memory before sending to the vendor.",
+    trip_type: "A code indicating whether the trip was a street-hail or a dispatch.",
+    pickup_date: "The date when the meter was engaged.",
+    pickup_time: "The time when the meter was engaged.",
+    dropoff_date: "The date when the meter was disengaged.",
+    dropoff_time: "The time when the meter was disengaged.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT
+  t.trip_key,
+  s.passenger_count,
+  s.trip_distance,
+  s.rate_code,
+  s.store_and_fwd_flag,
+  s.trip_type,
+  s.pickup_date,
+  s.pickup_time,
+  s.dropoff_date,
+  s.dropoff_time,
+  CURRENT_TIMESTAMP() AS load_date
+FROM
+  ${ref("stg_green_taxi_trips")} AS s
+  JOIN ${ref("hub_trip")} AS t
+    ON s.vendor_id = t.vendor_id AND s.pickup_datetime = t.pickup_datetime AND s.dropoff_datetime = t.dropoff_datetime

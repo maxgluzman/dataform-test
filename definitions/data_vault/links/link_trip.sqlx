@@ -1,0 +1,30 @@
+config {
+  type: "table",
+  schema: "dataform_data_vault",
+  name: "link_trip",
+  description: "Link table connecting trips, vendors, and locations.",
+  columns: {
+    trip_key: "Foreign key to the trip hub.",
+    vendor_key: "Foreign key to the vendor hub.",
+    pickup_location_key: "Foreign key to the pickup location hub.",
+    dropoff_location_key: "Foreign key to the dropoff location hub.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT
+  t.trip_key,
+  v.vendor_key,
+  pl.location_key AS pickup_location_key,
+  dl.location_key AS dropoff_location_key,
+  CURRENT_TIMESTAMP() AS load_date
+FROM
+  ${ref("stg_green_taxi_trips")} AS s
+  JOIN ${ref("hub_trip")} AS t
+    ON s.vendor_id = t.vendor_id AND s.pickup_datetime = t.pickup_datetime AND s.dropoff_datetime = t.dropoff_datetime
+  JOIN ${ref("hub_vendor")} AS v
+    ON s.vendor_id = v.vendor_key
+  JOIN ${ref("hub_location")} AS pl
+    ON s.pickup_location_id = pl.location_key
+  JOIN ${ref("hub_location")} AS dl
+    ON s.dropoff_location_id = dl.location_key

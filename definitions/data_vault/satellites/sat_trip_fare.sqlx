@@ -1,0 +1,36 @@
+config {
+  type: "table",
+  schema: "dataform_data_vault",
+  name: "sat_trip_fare",
+  description: "Satellite table with trip fare information.",
+  columns: {
+    trip_key: "Foreign key to the trip hub.",
+    fare_amount: "The time-and-distance fare calculated by the meter.",
+    extra: "Miscellaneous extras and surcharges.",
+    mta_tax: "$0.50 MTA tax that is automatically triggered based on the metered rate in use.",
+    tip_amount: "This field is automatically populated for credit card tips. Cash tips are not included.",
+    tolls_amount: "Total amount of all tolls paid in trip.",
+    ehail_fee: "The e-hail fee.",
+    airport_fee: "The airport fee.",
+    total_amount: "The total amount charged to passengers. Does not include cash tips.",
+    imp_surcharge: "$0.30 improvement surcharge assessed trips at the flag drop.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT
+  t.trip_key,
+  s.fare_amount,
+  s.extra,
+  s.mta_tax,
+  s.tip_amount,
+  s.tolls_amount,
+  s.ehail_fee,
+  s.airport_fee,
+  s.total_amount,
+  s.imp_surcharge,
+  CURRENT_TIMESTAMP() AS load_date
+FROM
+  ${ref("stg_green_taxi_trips")} AS s
+  JOIN ${ref("hub_trip")} AS t
+    ON s.vendor_id = t.vendor_id AND s.pickup_datetime = t.pickup_datetime AND s.dropoff_datetime = t.dropoff_datetime

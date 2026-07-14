@@ -1,0 +1,22 @@
+config {
+  type: "table",
+  schema: "dataform_data_vault",
+  name: "hub_trip",
+  description: "Hub table for trips.",
+  columns: {
+    trip_key: "Unique identifier for the trip.",
+    vendor_id: "A code indicating the TPEP provider that provided the record.",
+    pickup_datetime: "The date and time when the meter was engaged.",
+    dropoff_datetime: "The date and time when the meter was disengaged.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT
+  GENERATE_UUID() AS trip_key,
+  vendor_id,
+  pickup_datetime,
+  dropoff_datetime,
+  CURRENT_TIMESTAMP() AS load_date
+FROM
+  ${ref("stg_green_taxi_trips")}
