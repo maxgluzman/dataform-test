@@ -1,0 +1,20 @@
+config {
+  type: "view",
+  schema: "dataform_reporting",
+  name: "payment_type_summary",
+  description: "Aggregated view to track total distance and revenue by payment type.",
+  columns: {
+    payment_type: "The type of payment.",
+    total_distance: "The total distance of trips for the payment type.",
+    total_revenue: "The total revenue of trips for the payment type."
+  }
+}
+
+SELECT
+  payment_type,
+  SUM(trip_distance) AS total_distance,
+  SUM(total_amount) AS total_revenue
+FROM
+  ${ref("fact_trips")}
+GROUP BY
+  1

@@ -1,0 +1,16 @@
+config {
+  type: "table",
+  schema: "dataform_marts",
+  name: "dim_vendor",
+  description: "Dimension table for vendors.",
+  columns: {
+    vendor_key: "Unique identifier for the vendor.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT
+  vendor_key,
+  load_date
+FROM
+  ${ref("hub_vendor")}

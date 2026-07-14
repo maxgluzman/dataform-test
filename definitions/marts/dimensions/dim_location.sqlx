@@ -1,0 +1,16 @@
+config {
+  type: "table",
+  schema: "dataform_marts",
+  name: "dim_location",
+  description: "Dimension table for locations.",
+  columns: {
+    location_key: "Unique identifier for the location.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT
+  location_key,
+  load_date
+FROM
+  ${ref("hub_location")}

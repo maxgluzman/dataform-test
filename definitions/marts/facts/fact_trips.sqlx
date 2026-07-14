@@ -1,0 +1,44 @@
+config {
+  type: "table",
+  schema: "dataform_marts",
+  name: "fact_trips",
+  description: "Fact table for taxi trips.",
+  columns: {
+    trip_key: "Foreign key to the trip hub.",
+    vendor_key: "Foreign key to the vendor dimension.",
+    pickup_location_key: "Foreign key to the pickup location dimension.",
+    dropoff_location_key: "Foreign key to the dropoff location dimension.",
+    pickup_date_key: "Foreign key to the pickup date dimension.",
+    dropoff_date_key: "Foreign key to the dropoff date dimension.",
+    passenger_count: "The number of passengers in the vehicle.",
+    trip_distance: "The elapsed trip distance in miles reported by the taximeter.",
+    fare_amount: "The time-and-distance fare calculated by the meter.",
+    total_amount: "The total amount charged to passengers. Does not include cash tips.",
+    payment_type: "A numeric code signifying how the passenger paid for the trip."
+  }
+}
+
+SELECT
+  l.trip_key,
+  l.vendor_key,
+  l.pickup_location_key,
+  l.dropoff_location_key,
+  d.date AS pickup_date_key,
+  d2.date AS dropoff_date_key,
+  sd.passenger_count,
+  sd.trip_distance,
+  sf.fare_amount,
+  sf.total_amount,
+  sp.payment_type
+FROM
+  ${ref("link_trip")} AS l
+  JOIN ${ref("sat_trip_details")} AS sd
+    ON l.trip_key = sd.trip_key
+  JOIN ${ref("sat_trip_fare")} AS sf
+    ON l.trip_key = sf.trip_key
+  JOIN ${ref("sat_trip_payment")} AS sp
+    ON l.trip_key = sp.trip_key
+  JOIN ${ref("dim_date")} AS d
+    ON sd.pickup_date = d.date
+  JOIN ${ref("dim_date")} AS d2
+    ON sd.dropoff_date = d2.date

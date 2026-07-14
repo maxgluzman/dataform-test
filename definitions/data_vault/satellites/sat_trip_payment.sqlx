@@ -1,0 +1,20 @@
+config {
+  type: "table",
+  schema: "dataform_data_vault",
+  name: "sat_trip_payment",
+  description: "Satellite table with trip payment details.",
+  columns: {
+    trip_key: "Foreign key to the trip hub.",
+    payment_type: "A numeric code signifying how the passenger paid for the trip.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT
+  t.trip_key,
+  s.payment_type,
+  CURRENT_TIMESTAMP() AS load_date
+FROM
+  ${ref("stg_green_taxi_trips")} AS s
+  JOIN ${ref("hub_trip")} AS t
+    ON s.vendor_id = t.vendor_id AND s.pickup_datetime = t.pickup_datetime AND s.dropoff_datetime = t.dropoff_datetime

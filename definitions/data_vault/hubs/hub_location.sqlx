@@ -1,0 +1,28 @@
+config {
+  type: "table",
+  schema: "dataform_data_vault",
+  name: "hub_location",
+  description: "Hub table for locations.",
+  columns: {
+    location_key: "Unique identifier for the location.",
+    load_date: "The date and time when the record was loaded."
+  }
+}
+
+SELECT DISTINCT
+  location_id AS location_key,
+  CURRENT_TIMESTAMP() AS load_date
+FROM
+  (
+    SELECT
+      pickup_location_id AS location_id
+    FROM
+      ${ref("stg_green_taxi_trips")}
+    UNION ALL
+    SELECT
+      dropoff_location_id AS location_id
+    FROM
+      ${ref("stg_green_taxi_trips")}
+  )
+WHERE
+  location_id IS NOT NULL
